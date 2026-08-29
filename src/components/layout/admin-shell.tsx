@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { ChevronDown, Menu, ShieldCheck } from "lucide-react";
 
 import {
   isNavigationItemActive,
@@ -13,7 +13,7 @@ export interface AdminShellProps {
   children: ReactNode;
   sections: readonly ShellNavigationSection[];
   activeHref: string;
-  title: string;
+  title?: string;
   description?: string;
   homeHref?: string;
   headerActions?: ReactNode;
@@ -43,11 +43,9 @@ function AdminBrand({ homeHref }: { homeHref: string }) {
 function AdminNavigationLink({
   item,
   activeHref,
-  mobile = false,
 }: {
   item: ShellNavigationItem;
   activeHref: string;
-  mobile?: boolean;
 }) {
   const active = isNavigationItemActive(item, activeHref);
   const Icon = item.icon;
@@ -59,7 +57,7 @@ function AdminNavigationLink({
         strokeWidth={1.75}
       />
       <span className="truncate">{item.label}</span>
-      {!mobile && item.badge !== undefined ? (
+      {item.badge !== undefined ? (
         <span className="ml-auto rounded-pill bg-surface-muted px-2 py-0.5 text-xs font-semibold">
           {item.badge}
         </span>
@@ -68,7 +66,6 @@ function AdminNavigationLink({
   );
   const classes = classNames(
     "flex min-h-control items-center gap-2 rounded-control px-3 py-2 text-sm font-medium transition-colors",
-    mobile && "shrink-0",
     active
       ? "bg-primary text-primary-foreground"
       : "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
@@ -155,37 +152,61 @@ export function AdminShell({
               </div>
             </div>
 
-            <nav
-              aria-label="Admin navigation"
-              className="flex gap-2 overflow-x-auto border-t border-border px-page py-2 lg:hidden"
-            >
-              {sections.flatMap((section) =>
-                section.items.map((item) => (
-                  <AdminNavigationLink
-                    key={item.href}
-                    item={item}
-                    activeHref={activeHref}
-                    mobile
-                  />
-                )),
-              )}
-            </nav>
+            <details className="group border-t border-border lg:hidden">
+              <summary className="flex min-h-control cursor-pointer list-none items-center gap-2 px-page py-2 text-sm font-semibold marker:hidden">
+                <Menu aria-hidden="true" className="size-5" strokeWidth={1.75} />
+                Admin navigation
+                <ChevronDown
+                  aria-hidden="true"
+                  className="ml-auto size-4 transition-transform group-open:rotate-180"
+                  strokeWidth={1.75}
+                />
+              </summary>
+              <nav
+                aria-label="Admin navigation"
+                className="max-h-[calc(100dvh-8rem)] space-y-5 overflow-y-auto border-t border-border px-page py-4"
+              >
+                {sections.map((section) => (
+                  <div key={section.label}>
+                    <p className="px-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      {section.label}
+                    </p>
+                    <div className="mt-2 space-y-1">
+                      {section.items.map((item) => (
+                        <AdminNavigationLink
+                          key={item.href}
+                          item={item}
+                          activeHref={activeHref}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {account ? (
+                  <div className="border-t border-border pt-4">{account}</div>
+                ) : null}
+              </nav>
+            </details>
           </header>
 
           <main
             id="admin-main-content"
             className="mx-auto w-full max-w-app px-page py-6 sm:py-8"
           >
-            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h1 className="text-heading-1 font-semibold">{title}</h1>
-                {description ? (
-                  <p className="mt-2 max-w-3xl text-sm text-muted-foreground sm:text-base">
-                    {description}
-                  </p>
-                ) : null}
+            {title || description ? (
+              <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  {title ? (
+                    <h1 className="text-heading-1 font-semibold">{title}</h1>
+                  ) : null}
+                  {description ? (
+                    <p className="mt-2 max-w-3xl text-sm text-muted-foreground sm:text-base">
+                      {description}
+                    </p>
+                  ) : null}
+                </div>
               </div>
-            </div>
+            ) : null}
             {children}
           </main>
         </div>

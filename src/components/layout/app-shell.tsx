@@ -11,6 +11,7 @@ import { classNames } from "@/lib/class-names";
 export interface AppShellProps {
   children: ReactNode;
   navigation: readonly ShellNavigationItem[];
+  secondaryNavigation?: readonly ShellNavigationItem[];
   activeHref: string;
   title?: string;
   homeHref?: string;
@@ -95,6 +96,7 @@ function NavigationLink({
 export function AppShell({
   children,
   navigation,
+  secondaryNavigation = [],
   activeHref,
   title,
   homeHref = "/app",
@@ -126,6 +128,21 @@ export function AppShell({
               />
             ))}
           </nav>
+
+          {secondaryNavigation.length > 0 ? (
+            <nav
+              aria-label="Secondary navigation"
+              className="mt-6 space-y-1 border-t border-border pt-4"
+            >
+              {secondaryNavigation.map((item) => (
+                <NavigationLink
+                  key={item.href}
+                  item={item}
+                  activeHref={activeHref}
+                />
+              ))}
+            </nav>
+          ) : null}
 
           {sidebarFooter ? (
             <div className="mt-6 border-t border-border pt-4">
