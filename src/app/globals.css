@@ -1,19 +1,169 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0f9ff;
-  --foreground: #0f172a;
+  /* Semantic colours */
+  --background: #f7fbfc;
+  --foreground: #102a36;
+
+  --surface: #ffffff;
+  --surface-muted: #edf6f8;
+  --surface-subtle: #f3f8fa;
+
+  --primary: #087e9e;
+  --primary-hover: #086b87;
+  --primary-soft: #e5f7fb;
+  --primary-foreground: #ffffff;
+
+  --muted-foreground: #526d77;
+  --border: #d7e6ea;
+  --border-strong: #adc7ce;
+  --focus-ring: #087e9e;
+
+  --success: #17653a;
+  --success-soft: #e9f8ef;
+
+  --warning: #81510a;
+  --warning-soft: #fff7df;
+
+  --danger: #b42318;
+  --danger-soft: #fff0ee;
+
+  --info: #155e75;
+  --info-soft: #e8f7fb;
+
+  --disabled: #e6eef0;
+  --disabled-foreground: #71868e;
+
+  /* Responsive layout */
+  --page-gutter: 1rem;
+  --content-max: 80rem;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --page-gutter: 1.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --page-gutter: 2rem;
+  }
 }
 
 @theme inline {
+  /* Brand palette: reserve for illustration and data visualisation */
+  --color-aqua-50: #eefbff;
+  --color-aqua-100: #d9f5ff;
+  --color-aqua-200: #b3ebff;
+  --color-aqua-300: #75dcff;
+  --color-aqua-400: #2dc8f3;
+  --color-aqua-500: #06a9d3;
+  --color-aqua-600: #087e9e;
+  --color-aqua-700: #086b87;
+  --color-aqua-800: #115972;
+  --color-aqua-900: #124a60;
+  --color-aqua-950: #082f42;
+
+  /* Semantic Tailwind utilities */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-subtle: var(--surface-subtle);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-focus-ring: var(--focus-ring);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-disabled: var(--disabled);
+  --color-disabled-foreground: var(--disabled-foreground);
+
+  /* Typography */
+  --font-sans: var(--font-aqualoop), Arial, Helvetica, sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --text-display: clamp(2.25rem, 5vw, 4rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.04em;
+
+  --text-heading-1: clamp(1.875rem, 3vw, 2.5rem);
+  --text-heading-1--line-height: 1.15;
+  --text-heading-1--letter-spacing: -0.03em;
+
+  --text-heading-2: 1.5rem;
+  --text-heading-2--line-height: 1.25;
+  --text-heading-2--letter-spacing: -0.02em;
+
+  /* Shape and elevation */
+  --radius-control: 0.75rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
+  --radius-pill: 9999px;
+
+  --shadow-card:
+    0 1px 2px rgb(8 47 66 / 0.05),
+    0 8px 24px rgb(8 47 66 / 0.07);
+  --shadow-dialog: 0 24px 64px rgb(8 47 66 / 0.18);
+
+  /* Semantic spacing */
+  --spacing-page: var(--page-gutter);
+  --spacing-control: 2.75rem;
+  --container-app: var(--content-max);
+
+  /* Explicit responsive contract */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
 }
 
 body {
+  min-height: 100%;
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-aqualoop), Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--primary-soft);
+  color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--focus-ring) 35%, transparent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
