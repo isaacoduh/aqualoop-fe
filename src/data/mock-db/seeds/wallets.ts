@@ -1,10 +1,10 @@
 import type { Wallet, LedgerEntry } from "@/domain/types";
 
 export const wallets: Wallet[] = [
-  { id:"wal_usr_001", ownerType:"USER", ownerId:"usr_001", currency:"NGN", cachedBalance:18500, updatedAt:"2026-08-29T09:30:00Z" },
-  { id:"wal_usr_002", ownerType:"USER", ownerId:"usr_002", currency:"NGN", cachedBalance:6200, updatedAt:"2026-08-29T09:30:00Z" },
-  { id:"wal_op_001", ownerType:"OPERATOR", ownerId:"op_001", currency:"NGN", cachedBalance:528000, updatedAt:"2026-08-29T09:30:00Z" },
-  { id:"wal_op_002", ownerType:"OPERATOR", ownerId:"op_002", currency:"NGN", cachedBalance:311400, updatedAt:"2026-08-29T09:30:00Z" }
+  { id:"wal_usr_001", ownerType:"USER", ownerId:"usr_001", currency:"GBP", cachedBalance:18500, updatedAt:"2026-08-29T09:30:00Z" },
+  { id:"wal_usr_002", ownerType:"USER", ownerId:"usr_002", currency:"GBP", cachedBalance:6200, updatedAt:"2026-08-29T09:30:00Z" },
+  { id:"wal_op_001", ownerType:"OPERATOR", ownerId:"op_001", currency:"GBP", cachedBalance:528000, updatedAt:"2026-08-29T09:30:00Z" },
+  { id:"wal_op_002", ownerType:"OPERATOR", ownerId:"op_002", currency:"GBP", cachedBalance:311400, updatedAt:"2026-08-29T09:30:00Z" }
 ];
 
 export const ledgerEntries: LedgerEntry[] = [

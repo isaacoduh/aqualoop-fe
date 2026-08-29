@@ -1,5 +1,12 @@
 export type ID = string;
-export type Currency = "NGN";
+export type Currency = "GBP";
+
+/**
+ * Monetary values are stored as integer minor units.
+ *
+ * For GBP, 1600 represents £16.00.
+ */
+export type MoneyInMinorUnits = number;
 
 export type UserRole = "CUSTOMER" | "OPERATOR" | "ADMIN" | "SUPER_ADMIN";
 export type AccountStatus = "ACTIVE" | "PENDING" | "SUSPENDED" | "BLOCKED" | "DELETED";
@@ -88,7 +95,7 @@ export interface Business {
   reviewCount: number;
   fulfilmentModes: FulfilmentMode[];
   deliveryRadiusKm: number;
-  minimumOrder: number;
+  minimumOrder: MoneyInMinorUnits;
   addressId: ID;
   coordinates: Coordinates;
   openingHours: Record<string, [string, string] | null>;
@@ -112,8 +119,8 @@ export interface BusinessProduct {
   id: ID;
   businessId: ID;
   productId: ID;
-  price: number;
-  depositAmount: number;
+  price: MoneyInMinorUnits;
+  depositAmount: MoneyInMinorUnits;
   active: boolean;
 }
 
@@ -150,11 +157,11 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   currency: Currency;
-  subtotal: number;
-  deliveryFee: number;
-  depositAmount: number;
-  discount: number;
-  total: number;
+  subtotal: MoneyInMinorUnits;
+  deliveryFee: MoneyInMinorUnits;
+  depositAmount: MoneyInMinorUnits;
+  discount: MoneyInMinorUnits;
+  total: MoneyInMinorUnits;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -165,9 +172,9 @@ export interface OrderItem {
   orderId: ID;
   productId: ID;
   quantity: number;
-  unitPrice: number;
-  depositAmount: number;
-  lineTotal: number;
+  unitPrice: MoneyInMinorUnits;
+  depositAmount: MoneyInMinorUnits;
+  lineTotal: MoneyInMinorUnits;
   expectedEmptyReturns: number;
 }
 
@@ -189,7 +196,7 @@ export interface Payment {
   userId: ID;
   paymentMethodId: ID;
   providerReference: string;
-  amount: number;
+  amount: MoneyInMinorUnits;
   currency: Currency;
   status: PaymentStatus;
   createdAt: string;
@@ -201,7 +208,7 @@ export interface Wallet {
   ownerType: "USER" | "OPERATOR";
   ownerId: ID;
   currency: Currency;
-  cachedBalance: number;
+  cachedBalance: MoneyInMinorUnits;
   updatedAt: string;
 }
 
@@ -210,7 +217,7 @@ export interface LedgerEntry {
   walletId: ID;
   direction: "CREDIT" | "DEBIT";
   type: "ORDER_PAYMENT" | "ORDER_EARNING" | "REFUND" | "WITHDRAWAL" | "ADJUSTMENT";
-  amount: number;
+  amount: MoneyInMinorUnits;
   referenceType: "ORDER" | "PAYMENT" | "WITHDRAWAL" | "SYSTEM";
   referenceId: ID;
   description: string;
@@ -258,7 +265,7 @@ export interface Withdrawal {
   operatorId: ID;
   businessId: ID;
   walletId: ID;
-  amount: number;
+  amount: MoneyInMinorUnits;
   status: WithdrawalStatus;
   requestedAt: string;
   processedAt?: string;
@@ -267,7 +274,7 @@ export interface Withdrawal {
 export interface Plan {
   id: ID;
   name: "STARTER" | "GROWTH" | "PRO";
-  monthlyFee: number;
+  monthlyFee: MoneyInMinorUnits;
   settlementFeePercent: number;
   maxBusinesses: number;
   analyticsRetentionDays: number;
@@ -316,7 +323,7 @@ export interface PlatformSettings {
   confirmationCodeLifetimeMinutes: number;
   maxFailedLoginAttempts: number;
   accountLockoutMinutes: number;
-  minimumWithdrawalByPlan: Record<Plan["name"], number>;
+  minimumWithdrawalByPlan: Record<Plan["name"], MoneyInMinorUnits>;
 }
 
 export interface SupportArticle {
