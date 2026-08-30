@@ -1,6 +1,7 @@
 import "client-only";
 
 export {
+  addressRepository,
   businessRepository,
   deliveryRepository,
   inventoryRepository,
