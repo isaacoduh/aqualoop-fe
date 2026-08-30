@@ -283,12 +283,42 @@ export interface Withdrawal {
 
 export interface Plan {
   id: ID;
-  name: "STARTER" | "GROWTH" | "PRO";
+  name: string;
   monthlyFee: MoneyInMinorUnits;
   settlementFeePercent: number;
   maxBusinesses: number;
   analyticsRetentionDays: number;
   active: boolean;
+}
+
+export interface RolloverRequest {
+  id: ID;
+  operatorId: ID;
+  businessId: ID;
+  productId: ID;
+  quantity: number;
+  reason: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "COMPLETED";
+  requestedAt: string;
+  processedAt?: string;
+}
+
+export interface BlocklistEntry {
+  id: ID;
+  type: "EMAIL" | "PHONE";
+  value: string;
+  reason: string;
+  active: boolean;
+  createdBy: ID;
+  createdAt: string;
+}
+
+export interface CleanupRun {
+  id: ID;
+  scope: "EXPIRED_CODES" | "READ_NOTIFICATIONS" | "STALE_DRAFTS";
+  affectedRows: number;
+  adminId: ID;
+  runAt: string;
 }
 
 export interface VerificationRequest {
@@ -333,7 +363,7 @@ export interface PlatformSettings {
   confirmationCodeLifetimeMinutes: number;
   maxFailedLoginAttempts: number;
   accountLockoutMinutes: number;
-  minimumWithdrawalByPlan: Record<Plan["name"], MoneyInMinorUnits>;
+  minimumWithdrawalByPlan: Record<string, MoneyInMinorUnits>;
 }
 
 export interface SupportArticle {

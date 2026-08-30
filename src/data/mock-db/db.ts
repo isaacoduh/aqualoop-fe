@@ -6,9 +6,11 @@ import type {
   AdminPermissionMap,
   AdminUser,
   BankAccount,
+  BlocklistEntry,
   Business,
   BusinessProduct,
   ConfirmationCode,
+  CleanupRun,
   Delivery,
   ID,
   Inventory,
@@ -24,6 +26,7 @@ import type {
   PlatformSettings,
   Product,
   Review,
+  RolloverRequest,
   SupportArticle,
   User,
   VerificationRequest,
@@ -58,6 +61,9 @@ type TableMap = {
   verificationRequests: VerificationRequest[];
   admins: AdminUser[];
   supportArticles: SupportArticle[];
+  rolloverRequests: RolloverRequest[];
+  blocklistEntries: BlocklistEntry[];
+  cleanupRuns: CleanupRun[];
 };
 
 type TableName = keyof TableMap;
@@ -103,6 +109,9 @@ class MemoryDatabase {
         verificationRequests: seed.verificationRequests,
         admins: seed.admins,
         supportArticles: seed.supportArticles,
+        rolloverRequests: seed.rolloverRequests,
+        blocklistEntries: seed.blocklistEntries,
+        cleanupRuns: seed.cleanupRuns,
       },
       platformSettings: seed.platformSettings,
       adminPermissions: seed.adminPermissions,

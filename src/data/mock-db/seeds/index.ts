@@ -16,4 +16,5 @@ export * from "./withdrawals";
 export * from "./plans";
 export * from "./verification";
 export * from "./admins";
+export * from "./admin-operations";
 export * from "./support";

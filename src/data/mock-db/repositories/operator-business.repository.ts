@@ -37,7 +37,7 @@ export const operatorBusinessRepository = {
   async withdrawals(operatorId: ID) { await delay(350); const { wallet }=context(operatorId); return { wallet, rows:db.where("withdrawals",(row)=>row.operatorId===operatorId).sort((a,b)=>b.requestedAt.localeCompare(a.requestedAt)) }; },
   async findWithdrawal(operatorId: ID, id: ID) { await delay(300); return db.where("withdrawals",(row)=>row.operatorId===operatorId&&row.id===id)[0] ?? null; },
   async requestWithdrawal(operatorId: ID, amount: number) {
-    await delay(600); const { operator,business,wallet }=context(operatorId); const plan=db.findById("plans",operator.planId); const minimum=plan ? db.settings().minimumWithdrawalByPlan[plan.name] : 0;
+    await delay(600); const { operator,business,wallet }=context(operatorId); const plan=db.findById("plans",operator.planId); const minimum=plan ? (db.settings().minimumWithdrawalByPlan[plan.name] ?? 0) : 0;
     if (!db.settings().withdrawalsEnabled) throw new Error("Withdrawals are temporarily unavailable.");
     if (!Number.isInteger(amount) || amount < minimum) throw new Error(`Minimum withdrawal is ${minimum} minor units.`);
     if (amount > wallet.cachedBalance) throw new Error("Amount exceeds your available balance.");

@@ -3,6 +3,7 @@ import "client-only";
 export {
   addressRepository,
   adminAccountsRepository,
+  adminOperationsRepository,
   businessRepository,
   checkoutRepository,
   customerActivityRepository,
