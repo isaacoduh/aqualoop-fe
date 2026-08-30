@@ -12,3 +12,4 @@ export * from "./review.repository";
 export * from "./notification.repository";
 export * from "./operator-onboarding.repository";
 export * from "./operator-operations.repository";
+export * from "./operator-business.repository";

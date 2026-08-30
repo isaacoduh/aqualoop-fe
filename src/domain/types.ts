@@ -81,6 +81,16 @@ export interface Operator {
   createdAt: string;
 }
 
+export interface BankAccount {
+  id: ID;
+  operatorId: ID;
+  bankName: string;
+  accountName: string;
+  accountNumberLast4: string;
+  verified: boolean;
+  updatedAt: string;
+}
+
 export interface Business {
   id: ID;
   operatorId: ID;

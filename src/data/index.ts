@@ -11,6 +11,7 @@ export {
   notificationRepository,
   operatorOnboardingRepository,
   operatorOperationsRepository,
+  operatorBusinessRepository,
   orderRepository,
   paymentRepository,
   productRepository,

@@ -5,6 +5,7 @@ import type {
   Address,
   AdminPermissionMap,
   AdminUser,
+  BankAccount,
   Business,
   BusinessProduct,
   ConfirmationCode,
@@ -36,6 +37,7 @@ type TableMap = {
   users: User[];
   addresses: Address[];
   operators: Operator[];
+  bankAccounts: BankAccount[];
   businesses: Business[];
   products: Product[];
   businessProducts: BusinessProduct[];
@@ -80,6 +82,7 @@ class MemoryDatabase {
         users: seed.users,
         addresses: seed.addresses,
         operators: seed.operators,
+        bankAccounts: seed.bankAccounts,
         businesses: seed.businesses,
         products: seed.products,
         businessProducts: seed.businessProducts,
