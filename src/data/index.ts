@@ -9,6 +9,7 @@ export {
   deliveryRepository,
   inventoryRepository,
   notificationRepository,
+  operatorOnboardingRepository,
   orderRepository,
   paymentRepository,
   productRepository,

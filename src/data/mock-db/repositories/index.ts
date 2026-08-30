@@ -10,3 +10,4 @@ export * from "./payment.repository";
 export * from "./delivery.repository";
 export * from "./review.repository";
 export * from "./notification.repository";
+export * from "./operator-onboarding.repository";
