@@ -10,6 +10,7 @@ export {
   inventoryRepository,
   notificationRepository,
   operatorOnboardingRepository,
+  operatorOperationsRepository,
   orderRepository,
   paymentRepository,
   productRepository,
