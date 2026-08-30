@@ -1,0 +1,53 @@
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, ArrowRight, CreditCard, Plus, ReceiptText, ShieldCheck, Trash2, WalletCards } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { Card, ConfirmDialog, EmptyState, FormField, StatusBadge, formControlClassName } from "@/components/ui";
+import { customerActivityRepository, paymentRepository } from "@/data";
+import { SubmitButton } from "@/features/auth/auth-controls";
+import { ActivityLoading, CUSTOMER_ID, PageHeading, formatDate, statusTone, titleCase } from "@/features/customer-activity/activity-ui";
+import { formatMoney } from "@/lib/money";
+
+export function PaymentsScreen() {
+  const query = useQuery({ queryKey: ["customer-payments", CUSTOMER_ID], queryFn: () => customerActivityRepository.listPayments(CUSTOMER_ID) });
+  return <div><PageHeading eyebrow="Money" title="Payments" description="Review charges, refunds, saved cards, and wallet activity." action={<Link href="/app/payments/cards" className="inline-flex min-h-control items-center justify-center gap-2 rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"><CreditCard className="size-4" /> Manage cards</Link>} />
+    <div className="mt-7 grid gap-4 sm:grid-cols-2"><Link href="/app/payments/wallet"><Card className="h-full p-5 transition hover:border-primary"><WalletCards className="size-6 text-primary" /><h2 className="mt-4 font-semibold">AquaLoop wallet</h2><p className="mt-1 text-sm text-muted-foreground">View balance and wallet transactions.</p></Card></Link><Link href="/app/payments/transactions"><Card className="h-full p-5 transition hover:border-primary"><ReceiptText className="size-6 text-primary" /><h2 className="mt-4 font-semibold">All payment activity</h2><p className="mt-1 text-sm text-muted-foreground">See card charges and payment outcomes.</p></Card></Link></div>
+    {query.isLoading ? <ActivityLoading /> : null}
+    {query.data ? <section className="mt-8"><h2 className="text-heading-2 font-semibold">Recent payments</h2><div className="mt-4 space-y-3">{query.data.map(({ payment, order, business, method }) => <Card key={payment.id} className="flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center"><div><div className="flex flex-wrap items-center gap-2"><p className="font-semibold">{business?.name ?? "AquaLoop order"}</p><StatusBadge size="sm" tone={statusTone(payment.status)}>{titleCase(payment.status)}</StatusBadge></div><p className="mt-1 text-sm text-muted-foreground">{order?.orderNumber} · {method?.type === "CARD" ? `${method.brand} •••• ${method.last4}` : "Wallet"} · {formatDate(payment.createdAt, true)}</p></div><p className="text-lg font-semibold">{formatMoney(payment.amount)}</p></Card>)}</div></section> : null}</div>;
+}
+
+export function CardsScreen() {
+  const queryClient = useQueryClient();
+  const [removeId, setRemoveId] = useState<string | null>(null);
+  const query = useQuery({ queryKey: ["customer-payment-methods", CUSTOMER_ID], queryFn: () => paymentRepository.listMethods(CUSTOMER_ID) });
+  const defaultMutation = useMutation({ mutationFn: (id: string) => paymentRepository.setDefaultMethod(CUSTOMER_ID, id), onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customer-payment-methods", CUSTOMER_ID] }) });
+  const removeMutation = useMutation({ mutationFn: (id: string) => paymentRepository.removeCard(CUSTOMER_ID, id), onSuccess: () => { setRemoveId(null); queryClient.invalidateQueries({ queryKey: ["customer-payment-methods", CUSTOMER_ID] }); } });
+  const cards = query.data?.filter((method) => method.type === "CARD") ?? [];
+  return <div><PageHeading eyebrow="Payments" title="Saved cards" description="Only tokenized card details are stored in this demo." action={<Link href="/app/payments/cards/new" className="inline-flex min-h-control items-center justify-center gap-2 rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"><Plus className="size-4" /> Add card</Link>} />
+    {query.isLoading ? <ActivityLoading count={2} /> : <div className="mt-7 grid gap-4 md:grid-cols-2">{cards.map((card) => <Card key={card.id} className="p-5"><div className="flex items-start justify-between"><span className="flex size-11 items-center justify-center rounded-control bg-primary-soft text-primary"><CreditCard className="size-5" /></span>{card.isDefault ? <StatusBadge size="sm" tone="success">Default</StatusBadge> : null}</div><h2 className="mt-5 font-semibold">{card.brand} •••• {card.last4}</h2><p className="mt-1 text-sm text-muted-foreground">Expires {String(card.expiryMonth).padStart(2, "0")}/{card.expiryYear}</p><div className="mt-5 flex flex-wrap gap-3">{!card.isDefault ? <button type="button" onClick={() => defaultMutation.mutate(card.id)} className="text-sm font-semibold text-primary">Make default</button> : null}<button type="button" onClick={() => setRemoveId(card.id)} className="inline-flex items-center gap-1 text-sm font-semibold text-danger"><Trash2 className="size-4" /> Remove</button></div></Card>)}</div>}
+    {removeMutation.isError ? <p role="alert" className="mt-4 text-sm font-medium text-danger">{removeMutation.error.message}</p> : null}
+    <ConfirmDialog open={Boolean(removeId)} onOpenChange={(open) => !open && setRemoveId(null)} title="Remove this saved card?" description="You will need to tokenize it again before using it for checkout." confirmLabel="Remove card" tone="danger" pending={removeMutation.isPending} onConfirm={() => removeId && removeMutation.mutate(removeId)} />
+  </div>;
+}
+
+type CardErrors = Record<string, string>;
+export function AddCardScreen() {
+  const router = useRouter(); const queryClient = useQueryClient(); const [errors, setErrors] = useState<CardErrors>({});
+  const mutation = useMutation({ mutationFn: (input: Parameters<typeof paymentRepository.addTokenizedCard>[1]) => paymentRepository.addTokenizedCard(CUSTOMER_ID, input), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["customer-payment-methods", CUSTOMER_ID] }); router.push("/app/payments/cards"); } });
+  function submit(event: React.FormEvent<HTMLFormElement>) { event.preventDefault(); const data = new FormData(event.currentTarget); const number = String(data.get("number") ?? "").replace(/\D/g, ""); const expiry = String(data.get("expiry") ?? ""); const cvc = String(data.get("cvc") ?? ""); const next: CardErrors = {}; if (number.length !== 16) next.number = "Enter the 16-digit demo card number."; if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) next.expiry = "Use MM/YY format."; if (!/^\d{3,4}$/.test(cvc)) next.cvc = "Enter a valid demo security code."; setErrors(next); if (Object.keys(next).length === 0) { const [month, year] = expiry.split("/"); mutation.mutate({ brand: number.startsWith("4") ? "Visa" : "Mastercard", last4: number.slice(-4), expiryMonth: Number(month), expiryYear: 2000 + Number(year) }); } }
+  return <div className="mx-auto max-w-2xl"><Link href="/app/payments/cards" className="inline-flex items-center gap-2 text-sm font-semibold text-primary"><ArrowLeft className="size-4" /> Back to cards</Link><PageHeading eyebrow="Secure tokenization" title="Add a demo card" description="Use test details only. Card number and security code are discarded after tokenization." /><form onSubmit={submit} noValidate className="mt-7 space-y-5 rounded-panel border border-border bg-surface p-6 shadow-card"><FormField id="number" label="Demo card number" error={errors.number} required disabled={mutation.isPending}>{(props) => <input {...props} name="number" inputMode="numeric" autoComplete="cc-number" placeholder="4242 4242 4242 4242" className={formControlClassName} />}</FormField><div className="grid gap-5 sm:grid-cols-2"><FormField id="expiry" label="Expiry" error={errors.expiry} required disabled={mutation.isPending}>{(props) => <input {...props} name="expiry" placeholder="09/28" className={formControlClassName} />}</FormField><FormField id="cvc" label="Security code" error={errors.cvc} required disabled={mutation.isPending}>{(props) => <input {...props} name="cvc" inputMode="numeric" placeholder="123" className={formControlClassName} />}</FormField></div>{mutation.isError ? <p role="alert" className="text-sm font-medium text-danger">{mutation.error.message}</p> : null}<SubmitButton pending={mutation.isPending}><ShieldCheck className="size-4" /> Tokenize card</SubmitButton></form></div>;
+}
+
+export function WalletScreen() {
+  const query = useQuery({ queryKey: ["customer-wallet", CUSTOMER_ID], queryFn: () => customerActivityRepository.walletActivity(CUSTOMER_ID) });
+  return <div><PageHeading eyebrow="Payments" title="AquaLoop wallet" description="A simple balance for refunds and wallet checkout." />{query.isLoading ? <ActivityLoading /> : query.data?.wallet ? <><Card className="mt-7 overflow-hidden border-aqua-800 bg-aqua-950 p-6 text-white"><WalletCards className="size-7 text-aqua-200" /><p className="mt-6 text-sm text-aqua-100">Available balance</p><p className="mt-1 text-4xl font-semibold">{formatMoney(query.data.wallet.cachedBalance)}</p><p className="mt-5 text-xs text-aqua-200">Updated {formatDate(query.data.wallet.updatedAt, true)}</p></Card><Link href="/app/payments/transactions" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">View wallet transactions <ArrowRight className="size-4" /></Link></> : <EmptyState className="mt-7" title="Wallet unavailable" description="A customer wallet could not be found." />}</div>;
+}
+
+export function TransactionsScreen() {
+  const query = useQuery({ queryKey: ["customer-wallet", CUSTOMER_ID], queryFn: () => customerActivityRepository.walletActivity(CUSTOMER_ID) });
+  return <div><PageHeading eyebrow="Wallet" title="Transactions" description="Credits and debits are recorded as immutable wallet entries." />{query.isLoading ? <ActivityLoading /> : query.data && query.data.entries.length > 0 ? <div className="mt-7 space-y-3">{query.data.entries.map((entry) => <Card key={entry.id} className="flex items-center justify-between gap-4 p-5"><div><p className="font-semibold">{entry.description}</p><p className="mt-1 text-sm text-muted-foreground">{titleCase(entry.type)} · {formatDate(entry.createdAt, true)}</p></div><p className={`font-semibold ${entry.direction === "CREDIT" ? "text-success" : "text-foreground"}`}>{entry.direction === "CREDIT" ? "+" : "−"}{formatMoney(entry.amount)}</p></Card>)}</div> : <EmptyState className="mt-7" icon={ReceiptText} title="No wallet transactions" description="Wallet credits and payments will appear here." />}</div>;
+}

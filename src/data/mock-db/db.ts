@@ -168,6 +168,13 @@ class MemoryDatabase {
     return clone(updated);
   }
 
+  remove<K extends TableName>(name: K, id: ID): void {
+    const rows = this.table(name);
+    const index = rows.findIndex((row) => row.id === id);
+    if (index < 0) throw new Error(`${String(name)}:${id} not found`);
+    rows.splice(index, 1);
+  }
+
   settings(): PlatformSettings {
     return clone(this.state.platformSettings);
   }

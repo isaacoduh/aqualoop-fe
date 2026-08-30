@@ -4,6 +4,7 @@ export {
   addressRepository,
   businessRepository,
   checkoutRepository,
+  customerActivityRepository,
   deliveryRepository,
   inventoryRepository,
   notificationRepository,
