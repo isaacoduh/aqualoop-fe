@@ -114,9 +114,13 @@ export function BusinessDetail({ businessId }: { businessId: string }) {
           <div className="min-w-52 rounded-card bg-white/10 p-4 backdrop-blur">
             <p className="text-xs text-aqua-100">Minimum order</p>
             <p className="mt-1 text-2xl font-semibold">{formatMoney(business.minimumOrder)}</p>
-            <p className="mt-3 text-xs text-aqua-100">
-              {business.isOpen ? "Ordering will be enabled in M03." : "View products now and return during opening hours."}
-            </p>
+            {business.isOpen ? (
+              <Link href={`/order/business?businessId=${business.id}`} className="mt-4 inline-flex min-h-control w-full items-center justify-center rounded-control bg-white px-4 py-2 text-sm font-semibold text-aqua-950 hover:bg-aqua-50">
+                Start an order
+              </Link>
+            ) : (
+              <p className="mt-3 text-xs text-aqua-100">View products now and return during opening hours.</p>
+            )}
           </div>
         </div>
       </section>

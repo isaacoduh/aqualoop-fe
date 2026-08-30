@@ -1,5 +1,6 @@
 export * from "./address.repository";
 export * from "./business.repository";
+export * from "./checkout.repository";
 export * from "./order.repository";
 export * from "./product.repository";
 export * from "./inventory.repository";
