@@ -13,3 +13,4 @@ export * from "./notification.repository";
 export * from "./operator-onboarding.repository";
 export * from "./operator-operations.repository";
 export * from "./operator-business.repository";
+export * from "./admin-accounts.repository";
