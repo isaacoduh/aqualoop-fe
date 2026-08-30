@@ -3,6 +3,7 @@ import "client-only";
 import * as seed from "@/data/mock-db/seeds";
 import type {
   Address,
+  AdminPermission,
   AdminPermissionMap,
   AdminUser,
   BankAccount,
@@ -204,6 +205,18 @@ class MemoryDatabase {
 
   permissions(): AdminPermissionMap {
     return clone(this.state.adminPermissions);
+  }
+
+  updatePermissions(
+    role: AdminUser["role"],
+    patch: Partial<AdminPermission>,
+  ): AdminPermissionMap {
+    this.state.adminPermissions[role] = {
+      ...this.state.adminPermissions[role],
+      ...clone(patch),
+    };
+
+    return this.permissions();
   }
 }
 

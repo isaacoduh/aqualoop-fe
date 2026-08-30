@@ -1,5 +1,6 @@
 import { db, delay } from "@/data/mock-db/db";
 import type { AccountStatus, BusinessStatus, ID, VerificationStatus } from "@/domain/types";
+import { requireAdminPermission } from "@/data/mock-db/repositories/admin-authorization";
 
 function customerDetail(customerId: ID) {
   const user = db.findById("users", customerId);
@@ -72,11 +73,11 @@ export const adminAccountsRepository = {
   },
   async customers() { await delay(350); return db.where("users", (row) => row.role === "CUSTOMER").sort((a,b) => b.createdAt.localeCompare(a.createdAt)).map((user) => { const detail=customerDetail(user.id)!; return { user, orderCount:detail.orders.length, spend:detail.orders.filter(row=>row.paymentStatus==="PAID").reduce((sum,row)=>sum+row.total,0), ratingCount:detail.reviews.length }; }); },
   async customer(id: ID) { await delay(300); return customerDetail(id); },
-  async setCustomerStatus(id: ID, status: AccountStatus) { await delay(500); const detail=customerDetail(id); if(!detail)throw new Error("Customer not found."); if(!["ACTIVE","SUSPENDED","BLOCKED"].includes(status))throw new Error("Unsupported customer status."); return db.update("users",id,{status}); },
+  async setCustomerStatus(id: ID, status: AccountStatus) { await delay(500); requireAdminPermission(status==="BLOCKED"?"delete":"update"); const detail=customerDetail(id); if(!detail)throw new Error("Customer not found."); if(!["ACTIVE","SUSPENDED","BLOCKED"].includes(status))throw new Error("Unsupported customer status."); return db.update("users",id,{status}); },
   async operators() { await delay(350); return db.all("operators").sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map((operator)=>{const detail=operatorDetail(operator.id)!;return {operator,user:detail.user,businessCount:detail.businesses.length,orderCount:detail.orders.length,balance:detail.wallet?.cachedBalance??0};}); },
   async operator(id: ID) { await delay(300); return operatorDetail(id); },
-  async setOperatorStatus(id: ID, status: VerificationStatus) { await delay(550); const detail=operatorDetail(id); if(!detail)throw new Error("Operator not found."); db.update("operators",id,{status}); if(status==="APPROVED")db.update("users",detail.user.id,{status:"ACTIVE"}); if(status==="REJECTED"){db.update("users",detail.user.id,{status:"SUSPENDED"});detail.businesses.filter(row=>row.status==="ACTIVE").forEach(row=>db.update("businesses",row.id,{status:"SUSPENDED",isOpen:false}));} return operatorDetail(id)!; },
+  async setOperatorStatus(id: ID, status: VerificationStatus) { await delay(550); requireAdminPermission(status==="REJECTED"?"delete":"update"); const detail=operatorDetail(id); if(!detail)throw new Error("Operator not found."); db.update("operators",id,{status}); if(status==="APPROVED")db.update("users",detail.user.id,{status:"ACTIVE"}); if(status==="REJECTED"){db.update("users",detail.user.id,{status:"SUSPENDED"});detail.businesses.filter(row=>row.status==="ACTIVE").forEach(row=>db.update("businesses",row.id,{status:"SUSPENDED",isOpen:false}));} return operatorDetail(id)!; },
   async businesses() { await delay(350); return db.all("businesses").sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map((business)=>{const detail=businessDetail(business.id)!;return {business,operator:detail.operator,user:detail.user,orderCount:detail.orders.length,availableStock:detail.stock.reduce((sum,row)=>sum+Math.max(0,row.inventory.filledQty-row.inventory.reservedQty),0)};}); },
   async business(id: ID) { await delay(300); return businessDetail(id); },
-  async setBusinessStatus(id: ID, status: BusinessStatus) { await delay(550); const detail=businessDetail(id); if(!detail)throw new Error("Business not found."); const updated=db.update("businesses",id,{status,isOpen:status==="ACTIVE"?detail.business.isOpen:false}); return {...businessDetail(id)!,business:updated}; },
+  async setBusinessStatus(id: ID, status: BusinessStatus) { await delay(550); requireAdminPermission(status==="CLOSED"?"delete":"update"); const detail=businessDetail(id); if(!detail)throw new Error("Business not found."); const updated=db.update("businesses",id,{status,isOpen:status==="ACTIVE"?detail.business.isOpen:false}); return {...businessDetail(id)!,business:updated}; },
 };

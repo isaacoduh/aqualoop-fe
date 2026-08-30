@@ -7,16 +7,36 @@ export const admins: AdminUser[] = [
 ];
 
 export const platformSettings: PlatformSettings = {
+  platformName:"AquaLoop",
+  supportEmail:"support@aqualoop.example.test",
+  maintenanceMode:false,
   registrationEnabled:true,
+  operatorRegistrationEnabled:true,
+  maxCustomerAddresses:10,
+  maxOrderQuantity:20,
+  cancellationWindowMinutes:15,
   cardPaymentsEnabled:true,
   walletPaymentsEnabled:true,
   deliveryEnabled:true,
   pickupEnabled:true,
   reviewsEnabled:true,
   withdrawalsEnabled:true,
+  rolloverEnabled:true,
+  maxRolloverQuantity:50,
+  rolloverWindowDays:30,
+  notificationChannels:{IN_APP:true,EMAIL:true,SMS:true,PUSH:true},
   confirmationCodeLifetimeMinutes:1440,
   maxFailedLoginAttempts:5,
   accountLockoutMinutes:30,
+  adminMfaRequired:true,
+  minimumPasswordLength:10,
+  defaultPlanId:"plan_starter",
+  planChangesEnabled:true,
+  businessApprovalRequired:true,
+  maxDeliveryRadiusKm:50,
+  operatorApprovalRequired:true,
+  bankVerificationRequired:true,
+  withdrawalProcessingDays:3,
   minimumWithdrawalByPlan:{ STARTER:20000, GROWTH:10000, PRO:5000 }
 };
 

@@ -353,16 +353,36 @@ export interface AdminUser {
 }
 
 export interface PlatformSettings {
+  platformName: string;
+  supportEmail: string;
+  maintenanceMode: boolean;
   registrationEnabled: boolean;
+  operatorRegistrationEnabled: boolean;
+  maxCustomerAddresses: number;
+  maxOrderQuantity: number;
+  cancellationWindowMinutes: number;
   cardPaymentsEnabled: boolean;
   walletPaymentsEnabled: boolean;
   deliveryEnabled: boolean;
   pickupEnabled: boolean;
   reviewsEnabled: boolean;
   withdrawalsEnabled: boolean;
+  rolloverEnabled: boolean;
+  maxRolloverQuantity: number;
+  rolloverWindowDays: number;
+  notificationChannels: Record<NotificationChannel, boolean>;
   confirmationCodeLifetimeMinutes: number;
   maxFailedLoginAttempts: number;
   accountLockoutMinutes: number;
+  adminMfaRequired: boolean;
+  minimumPasswordLength: number;
+  defaultPlanId: ID;
+  planChangesEnabled: boolean;
+  businessApprovalRequired: boolean;
+  maxDeliveryRadiusKm: number;
+  operatorApprovalRequired: boolean;
+  bankVerificationRequired: boolean;
+  withdrawalProcessingDays: number;
   minimumWithdrawalByPlan: Record<string, MoneyInMinorUnits>;
 }
 
