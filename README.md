@@ -24,10 +24,11 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Quality checks
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm build
+pnpm release:check
 ```
+
+This runs lint, TypeScript validation, and the optimized production build in
+the same order used for release QA.
 
 ## Netlify deployment
 
@@ -35,3 +36,14 @@ Connect this repository to Netlify. The included `netlify.toml` configures the
 production build command, `.next` publish directory, and Node.js version.
 Netlify detects Next.js and supplies its maintained OpenNext adapter
 automatically.
+
+To reproduce the Netlify deploy-preview build context locally with the latest
+CLI, run:
+
+```bash
+pnpm dlx netlify-cli build --context deploy-preview
+```
+
+Opening a pull request on the connected repository creates the shareable
+Deploy Preview. Use `netlify deploy` only when you intentionally want a manual
+draft deploy.

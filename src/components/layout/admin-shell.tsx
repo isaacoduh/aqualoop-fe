@@ -8,6 +8,7 @@ import {
   type ShellNavigationSection,
 } from "@/components/layout/shell-navigation";
 import { classNames } from "@/lib/class-names";
+import { SkipLink } from "@/components/accessibility/skip-link";
 
 export interface AdminShellProps {
   children: ReactNode;
@@ -103,12 +104,7 @@ export function AdminShell({
 }: AdminShellProps) {
   return (
     <div className="min-h-dvh bg-surface-subtle text-foreground">
-      <a
-        href="#admin-main-content"
-        className="fixed top-3 left-3 z-50 -translate-y-20 rounded-control bg-foreground px-4 py-2 text-sm font-semibold text-background transition-transform focus:translate-y-0"
-      >
-        Skip to main content
-      </a>
+      <SkipLink targetId="admin-main-content" />
 
       <div className="lg:grid lg:grid-cols-[18rem_minmax(0,1fr)]">
         <aside className="sticky top-0 hidden h-dvh flex-col overflow-y-auto border-r border-border bg-surface px-4 py-5 lg:flex">
@@ -191,6 +187,7 @@ export function AdminShell({
 
           <main
             id="admin-main-content"
+            tabIndex={-1}
             className="mx-auto w-full max-w-app px-page py-6 sm:py-8"
           >
             {title || description ? (

@@ -129,6 +129,16 @@ export const operatorOperationsRepository = {
     const completed = db.update("orders", order.id, { status: "COMPLETED", updatedAt: now });
     const delivery = db.where("deliveries", (row) => row.orderId === order.id)[0];
     if (delivery) db.update("deliveries", delivery.id, { status: "COMPLETED", completedAt: now });
+    db.insert("notifications", {
+      id: `not_handover_${order.id}_${Date.now()}`,
+      userId: order.customerId,
+      title: "Order handover complete",
+      body: `${order.orderNumber} is complete and its confirmation code has been redeemed.`,
+      channel: "IN_APP",
+      type: "ORDER",
+      read: false,
+      createdAt: now,
+    });
     db.where("orderItems", (item) => item.orderId === order.id).forEach((item) => {
       const inventory = db.where("inventories", (row) => row.businessId === order.businessId && row.productId === item.productId)[0];
       if (!inventory) return;

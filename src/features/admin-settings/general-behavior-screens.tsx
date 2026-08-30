@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Bell, LockKeyhole, RefreshCcw, Save } from "lucide-react";
+import { Bell, DatabaseBackup, LockKeyhole, RefreshCcw, Save } from "lucide-react";
 import { useState } from "react";
 
 import { Card, ConfirmDialog, FormField, formControlClassName } from "@/components/ui";
@@ -11,7 +11,33 @@ import { SubmitButton } from "@/features/auth/auth-controls";
 import { SettingToggle, SettingsHeader, SettingsLoading, SettingsMutationMessage, useAdminSettings } from "@/features/admin-settings/settings-ui";
 
 function useUpdateSettings(){const client=useQueryClient();return useMutation({mutationFn:(patch:Partial<PlatformSettings>)=>adminSettingsRepository.update(patch),onSuccess:()=>client.invalidateQueries({queryKey:["admin-settings"]})})}
-export function GeneralSettingsScreen(){const query=useAdminSettings();const mutation=useUpdateSettings();if(query.isLoading)return <SettingsLoading/>;const s=query.data!.settings;function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();const d=new FormData(e.currentTarget);mutation.mutate({platformName:String(d.get("platformName")??""),supportEmail:String(d.get("supportEmail")??"")});}return <div><SettingsHeader title="General settings" description="Platform identity, support contact, and maintenance availability."/><div className="mt-7 grid gap-5 lg:grid-cols-2"><form onSubmit={submit}><Card className="space-y-5 p-6"><FormField id="platform-name" label="Platform name" required>{p=><input {...p} name="platformName" defaultValue={s.platformName} className={formControlClassName}/>}</FormField><FormField id="support-email" label="Support email" required>{p=><input {...p} name="supportEmail" type="email" defaultValue={s.supportEmail} className={formControlClassName}/>}</FormField><SubmitButton pending={mutation.isPending}><Save className="size-4"/>Save general settings</SubmitButton><SettingsMutationMessage mutation={mutation}/></Card></form><SettingToggle setting="maintenanceMode" label="Maintenance mode" description="When enabled, the platform is considered unavailable for normal customer and operator activity." destructiveWhenOn/></div></div>}
+
+function DemoResetCard(){
+  const client=useQueryClient();
+  const [open,setOpen]=useState(false);
+  const mutation=useMutation({
+    mutationFn:()=>adminSettingsRepository.resetDemo(),
+    onSuccess:async()=>{
+      setOpen(false);
+      await client.resetQueries();
+    },
+  });
+
+  return <Card className="p-6"><DatabaseBackup aria-hidden="true" className="size-6 text-danger"/><h2 className="mt-4 font-semibold">Reset demo data</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Restore every customer, operator, admin, order, stock, payment, code, and setting record to the original seeded state.</p><button type="button" onClick={()=>setOpen(true)} className="mt-5 min-h-control w-full rounded-control border border-danger px-4 text-sm font-semibold text-danger hover:bg-danger-soft">Reset all demo data</button>{mutation.isSuccess?<p role="status" className="mt-3 text-sm font-semibold text-success">Demo data restored.</p>:null}{mutation.isError?<p role="alert" className="mt-3 text-sm font-semibold text-danger">{mutation.error.message}</p>:null}<ConfirmDialog open={open} onOpenChange={setOpen} title="Reset all demo data?" description="This discards every change made during this browser session and restores the original AquaLoop demo records." confirmLabel="Reset demo data" pendingLabel="Restoring…" tone="danger" pending={mutation.isPending} onConfirm={()=>mutation.mutate()}/></Card>
+}
+
+export function GeneralSettingsScreen(){
+  const query=useAdminSettings();
+  const mutation=useUpdateSettings();
+  if(query.isLoading)return <SettingsLoading/>;
+  const s=query.data!.settings;
+  function submit(e:React.FormEvent<HTMLFormElement>){
+    e.preventDefault();
+    const d=new FormData(e.currentTarget);
+    mutation.mutate({platformName:String(d.get("platformName")??""),supportEmail:String(d.get("supportEmail")??"")});
+  }
+  return <div><SettingsHeader title="General settings" description="Platform identity, support contact, maintenance availability, and demo recovery."/><div className="mt-7 grid gap-5 lg:grid-cols-2"><form onSubmit={submit}><Card className="space-y-5 p-6"><FormField id="platform-name" label="Platform name" required>{p=><input {...p} name="platformName" defaultValue={s.platformName} className={formControlClassName}/>}</FormField><FormField id="support-email" label="Support email" required>{p=><input {...p} name="supportEmail" type="email" defaultValue={s.supportEmail} className={formControlClassName}/>}</FormField><SubmitButton pending={mutation.isPending}><Save className="size-4"/>Save general settings</SubmitButton><SettingsMutationMessage mutation={mutation}/></Card></form><SettingToggle setting="maintenanceMode" label="Maintenance mode" description="When enabled, the platform is considered unavailable for normal customer and operator activity." destructiveWhenOn/><DemoResetCard/></div></div>
+}
 
 export function CustomerSettingsScreen(){const query=useAdminSettings();const mutation=useUpdateSettings();if(query.isLoading)return <SettingsLoading/>;const s=query.data!.settings;function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();const d=new FormData(e.currentTarget);mutation.mutate({maxCustomerAddresses:Number(d.get("maxCustomerAddresses")),maxOrderQuantity:Number(d.get("maxOrderQuantity")),cancellationWindowMinutes:Number(d.get("cancellationWindowMinutes"))});}return <div><SettingsHeader title="Customer settings" description="Set reusable address, order-size, cancellation, and review boundaries."/><div className="mt-7 grid gap-5 lg:grid-cols-2"><form onSubmit={submit}><Card className="space-y-5 p-6"><FormField id="max-addresses" label="Maximum saved addresses" required>{p=><input {...p} name="maxCustomerAddresses" type="number" min="1" defaultValue={s.maxCustomerAddresses} className={formControlClassName}/>}</FormField><FormField id="max-order-quantity" label="Maximum units per order" required>{p=><input {...p} name="maxOrderQuantity" type="number" min="1" defaultValue={s.maxOrderQuantity} className={formControlClassName}/>}</FormField><FormField id="cancel-window" label="Cancellation window in minutes" required>{p=><input {...p} name="cancellationWindowMinutes" type="number" min="1" defaultValue={s.cancellationWindowMinutes} className={formControlClassName}/>}</FormField><SubmitButton pending={mutation.isPending}>Save customer limits</SubmitButton><SettingsMutationMessage mutation={mutation}/></Card></form><SettingToggle setting="reviewsEnabled" label="Customer reviews" description="Allow customers to submit feedback after completed orders." destructiveWhenOff/></div></div>}
 

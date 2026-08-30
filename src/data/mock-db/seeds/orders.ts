@@ -31,6 +31,30 @@ export const orders: Order[] = [
     fulfilmentMode:"PICKUP", status:"CANCELLED", paymentStatus:"REFUNDED", currency:"GBP",
     subtotal:3200, deliveryFee:0, depositAmount:0, discount:0, total:3200,
     createdAt:"2026-08-27T12:05:00Z", updatedAt:"2026-08-27T12:22:00Z"
+  },
+  {
+    id:"ord_10016", orderNumber:"AQ-10016", customerId:"usr_001", businessId:"biz_001",
+    fulfilmentMode:"PICKUP", status:"ACCEPTED", paymentStatus:"PAID", currency:"GBP",
+    subtotal:2400, deliveryFee:0, depositAmount:0, discount:0, total:2400,
+    createdAt:"2026-08-26T14:10:00Z", updatedAt:"2026-08-26T14:24:00Z"
+  },
+  {
+    id:"ord_10015", orderNumber:"AQ-10015", customerId:"usr_001", businessId:"biz_001",
+    fulfilmentMode:"PICKUP", status:"CONFIRMED", paymentStatus:"PAID", currency:"GBP",
+    subtotal:2100, deliveryFee:0, depositAmount:0, discount:0, total:2100,
+    createdAt:"2026-08-26T11:30:00Z", updatedAt:"2026-08-26T11:32:00Z"
+  },
+  {
+    id:"ord_10014", orderNumber:"AQ-10014", customerId:"usr_001", businessId:"biz_002",
+    fulfilmentMode:"DELIVERY", status:"PAYMENT_PENDING", paymentStatus:"FAILED", currency:"GBP",
+    subtotal:1700, deliveryFee:900, depositAmount:0, discount:0, total:2600,
+    createdAt:"2026-08-25T17:20:00Z", updatedAt:"2026-08-25T17:22:00Z"
+  },
+  {
+    id:"ord_10013", orderNumber:"AQ-10013", customerId:"usr_001", businessId:"biz_001",
+    fulfilmentMode:"PICKUP", status:"DRAFT", paymentStatus:"PENDING", currency:"GBP",
+    subtotal:1600, deliveryFee:0, depositAmount:0, discount:0, total:1600,
+    createdAt:"2026-08-25T09:05:00Z", updatedAt:"2026-08-25T09:05:00Z"
   }
 ];
 
@@ -40,5 +64,9 @@ export const orderItems: OrderItem[] = [
   { id:"oi_003", orderId:"ord_10020", productId:"prod_20l_exchange", quantity:2, unitPrice:4100, depositAmount:3600, lineTotal:8200, expectedEmptyReturns:2 },
   { id:"oi_004", orderId:"ord_10019", productId:"prod_20l_refill", quantity:2, unitPrice:2400, depositAmount:0, lineTotal:4800, expectedEmptyReturns:2 },
   { id:"oi_005", orderId:"ord_10018", productId:"prod_20l_refill", quantity:2, unitPrice:2500, depositAmount:0, lineTotal:5000, expectedEmptyReturns:2 },
-  { id:"oi_006", orderId:"ord_10017", productId:"prod_10l_refill", quantity:2, unitPrice:1600, depositAmount:0, lineTotal:3200, expectedEmptyReturns:2 }
+  { id:"oi_006", orderId:"ord_10017", productId:"prod_10l_refill", quantity:2, unitPrice:1600, depositAmount:0, lineTotal:3200, expectedEmptyReturns:2 },
+  { id:"oi_007", orderId:"ord_10016", productId:"prod_20l_refill", quantity:1, unitPrice:2400, depositAmount:0, lineTotal:2400, expectedEmptyReturns:1 },
+  { id:"oi_008", orderId:"ord_10015", productId:"prod_15l_refill", quantity:1, unitPrice:2100, depositAmount:0, lineTotal:2100, expectedEmptyReturns:1 },
+  { id:"oi_009", orderId:"ord_10014", productId:"prod_10l_refill", quantity:1, unitPrice:1700, depositAmount:0, lineTotal:1700, expectedEmptyReturns:1 },
+  { id:"oi_010", orderId:"ord_10013", productId:"prod_10l_refill", quantity:1, unitPrice:1600, depositAmount:0, lineTotal:1600, expectedEmptyReturns:1 }
 ];

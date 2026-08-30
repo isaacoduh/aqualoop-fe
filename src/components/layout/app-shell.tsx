@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Droplets } from "lucide-react";
 
+import { SkipLink } from "@/components/accessibility/skip-link";
 import {
   isNavigationItemActive,
   type ShellNavigationItem,
@@ -106,12 +107,7 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      <a
-        href="#main-content"
-        className="fixed top-3 left-3 z-50 -translate-y-20 rounded-control bg-foreground px-4 py-2 text-sm font-semibold text-background transition-transform focus:translate-y-0"
-      >
-        Skip to main content
-      </a>
+      <SkipLink targetId="main-content" />
 
       <div className="lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
         <aside className="sticky top-0 hidden h-dvh flex-col border-r border-border bg-surface px-4 py-5 lg:flex">
@@ -173,6 +169,7 @@ export function AppShell({
 
           <main
             id="main-content"
+            tabIndex={-1}
             className="mx-auto w-full max-w-app px-page py-6 pb-28 sm:py-8 lg:pb-10"
           >
             {children}
