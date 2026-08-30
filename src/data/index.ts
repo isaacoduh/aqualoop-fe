@@ -5,6 +5,7 @@ export {
   businessRepository,
   checkoutRepository,
   customerActivityRepository,
+  customerAccountRepository,
   deliveryRepository,
   inventoryRepository,
   notificationRepository,

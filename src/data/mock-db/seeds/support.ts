@@ -13,14 +13,14 @@ export const supportArticles: SupportArticle[] = [
     category: "PAYMENTS",
     title: "A payment is pending",
     summary: "What to do when a card payment has not completed.",
-    body: "Keep the order open while payment status is being confirmed. Do not submit duplicate payments. The final UI should refresh from the payment status endpoint."
+    body: "Keep the order open while payment status is being confirmed, and do not submit a duplicate payment. AquaLoop refreshes the status automatically; contact support if it remains pending."
   },
   {
     id: "sup_003",
     category: "DELIVERY",
     title: "My delivery is late",
     summary: "Track a delayed delivery and contact support.",
-    body: "Check the latest delivery status and ETA. If the order is beyond its promised window, expose the contact-support action."
+    body: "Check the latest delivery status and ETA. If the order is beyond its promised window, contact support with the order number."
   },
   {
     id: "sup_004",

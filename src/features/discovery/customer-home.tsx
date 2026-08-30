@@ -5,7 +5,7 @@ import { ArrowRight, LocateFixed, MapPin, SearchX, ShoppingBasket } from "lucide
 import Link from "next/link";
 
 import { EmptyState, LoadingSkeleton } from "@/components/ui";
-import { addressRepository, businessRepository } from "@/data";
+import { addressRepository, businessRepository, customerAccountRepository } from "@/data";
 import { BusinessCard } from "@/features/discovery/business-card";
 import { DiscoveryMap } from "@/features/discovery/discovery-map";
 
@@ -13,11 +13,12 @@ export function CustomerHome() {
   const query = useQuery({
     queryKey: ["customer-home-discovery", "usr_001"],
     queryFn: async () => {
-      const [location, businesses] = await Promise.all([
+      const [location, businesses, profile] = await Promise.all([
         addressRepository.findDefaultForOwner("usr_001"),
         businessRepository.listDiscovery(),
+        customerAccountRepository.findProfile("usr_001"),
       ]);
-      return { location, businesses };
+      return { location, businesses, profile };
     },
   });
 
@@ -25,7 +26,7 @@ export function CustomerHome() {
     <div className="space-y-9">
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm font-semibold text-primary">Good morning, Amina</p>
+          <p className="text-sm font-semibold text-primary">Good morning, {query.data?.profile?.firstName ?? "customer"}</p>
           <h1 className="mt-2 text-heading-1 font-semibold text-foreground">
             Where should we refill today?
           </h1>
@@ -120,7 +121,7 @@ export function CustomerHome() {
           </span>
           <div>
             <h2 className="text-lg font-semibold">Need your usual refill?</h2>
-            <p className="mt-1 text-sm leading-6 text-aqua-100">Choose a business now; repeat ordering arrives with the checkout milestone.</p>
+            <p className="mt-1 text-sm leading-6 text-aqua-100">Choose an approved business, review live stock, and start a secure checkout.</p>
           </div>
         </div>
         <Link href="/app/businesses" className="inline-flex min-h-control shrink-0 items-center justify-center gap-2 rounded-control bg-white px-4 py-2.5 text-sm font-semibold text-aqua-950 hover:bg-aqua-50">
